@@ -112,14 +112,28 @@ curl -sH "User-Agent: $UA" "https://aihot.virxact.com/api/public/items?mode=sele
 
 ### HTML 样式规范（三种模板通用）
 
-- 卡片宽度 `width: 750px`，白底 `background: #ffffff`
-- 主标题 `font-size: 56px; font-weight: 900; color: #111`
-- 正文 `font-size: 28px; color: #333; line-height: 1.85`
-- 顶部 5px 彩色装饰条（情绪色：红/橙/蓝/绿/紫）
-- 黄色高亮 `.hl { background: #fff3b0; padding: 0 3px; }`
-- 数据大字 `font-size: 80px; font-weight: 900; color: #e8192c`
-- 卡片 padding `48px 52px`，底部来源+页码 `padding: 20px 52px`
-- 每张卡片 `.card` class，高度自适应
+- 卡片宽度 `width: 750px`，**固定高度 `height: 1000px`**（3:4 比例，上传小红书不出现白边）
+- 卡片必须用 flex 布局：`.card { display: flex; flex-direction: column; overflow: hidden; }`
+- 顶部装饰条：`flex-shrink: 0`
+- 内容区：`.card-inner { flex: 1; padding: 40px 52px 32px; overflow: hidden; }`
+  - **禁止**用 `justify-content: space-between`，否则中间出现大段空白
+- 底部页码：`.card-footer { flex-shrink: 0; }`
+- 白底 `background: #ffffff`
+- 主标题 `font-size: 54px; font-weight: 900; color: #111; line-height: 1.3`
+- 正文 `font-size: 27px; color: #333; line-height: 1.8`
+- 顶部 8px 彩色装饰条（情绪色：红/橙/蓝/绿/紫）
+- 黄色高亮 `.hl { background: #fff3b0; padding: 0 4px; }`
+- 数据大字 `font-size: 46px; font-weight: 900; color: #e8192c`
+- 卡片 padding `40px 52px`，底部来源+页码 `padding: 12px 52px 16px`
+- 每张卡片 `.card` class
+
+### 卡片数量与内容密度（重要）
+
+- **目标张数：4～5 张**，不要超过 6 张
+- 每张卡片内容必须**视觉饱满**，不能有大段空白
+- 如果某张内容撑不满 1000px 高度，**立即与相邻卡片合并**，不要留空白
+- 合并原则：相关联的两张（如"对比"+"证据"，"技术拆解"+"回应"）合为一张
+- 正文字数每张 **100～150 字**为佳，宁可合并也不要稀疏
 
 ---
 
@@ -149,6 +163,10 @@ cd /Users/jiangziyi/Downloads && node screenshot_cards.mjs \
   /Users/jiangziyi/Downloads/小红书图片 \
   <slug>
 ```
+
+截图脚本参数说明（screenshot_cards.mjs）：
+- `deviceScaleFactor: 1.71`（输出约 1280×1710px，卡在小红书最大尺寸，不触发压缩，图片最清晰）
+- `width: 750px`，卡片固定高度 1000px → 物理输出恰好 1283×1710px，7 张全部尺寸一致
 
 截图完成后告知用户：
 
@@ -184,7 +202,7 @@ cd /Users/jiangziyi/Downloads && node screenshot_cards.mjs \
 ```
 
 **文案写作要求**：
-- 标题：数字/反常识/悬念三选一，前 10 字决定点击率
+- 标题：**必须以「AI日报｜」开头，总字数不超过 20 字**（含前缀）；数字/反常识/悬念三选一，前 10 字决定点击率
 - 正文：从一个具体场景或反常识结论入手，不要开门见山讲背景
 - 语气：像在跟朋友聊天，不要写成新闻稿
 - 结尾：必须有一个互动问题（"你觉得……""有没有人……"）
